@@ -43,6 +43,10 @@
 
 #define STS4X_I2C_ADDRESS 0x44
 
+static float convert_ticks_to_celsius(uint16_t ticks) {
+    return (float)ticks * 175.0f / 65535.0f - 45.0f;
+}
+
 int16_t sts4x_measure_high_precision_ticks(uint16_t* temperature_ticks) {
     int16_t error;
     uint8_t buffer[3];
@@ -61,6 +65,18 @@ int16_t sts4x_measure_high_precision_ticks(uint16_t* temperature_ticks) {
         return error;
     }
     *temperature_ticks = sensirion_common_bytes_to_uint16_t(&buffer[0]);
+    return NO_ERROR;
+}
+
+int16_t sts4x_measure_high_precision(float* temperature) {
+    int16_t error;
+    uint16_t temperature_ticks;
+
+    error = sts4x_measure_high_precision_ticks(&temperature_ticks);
+    if (error) {
+        return error;
+    }
+    *temperature = convert_ticks_to_celsius(temperature_ticks);
     return NO_ERROR;
 }
 
@@ -85,6 +101,18 @@ int16_t sts4x_measure_medium_precision_ticks(uint16_t* temperature_ticks) {
     return NO_ERROR;
 }
 
+int16_t sts4x_measure_medium_precision(float* temperature) {
+    int16_t error;
+    uint16_t temperature_ticks;
+
+    error = sts4x_measure_medium_precision_ticks(&temperature_ticks);
+    if (error) {
+        return error;
+    }
+    *temperature = convert_ticks_to_celsius(temperature_ticks);
+    return NO_ERROR;
+}
+
 int16_t sts4x_measure_lowest_precision_ticks(uint16_t* temperature_ticks) {
     int16_t error;
     uint8_t buffer[3];
@@ -103,6 +131,18 @@ int16_t sts4x_measure_lowest_precision_ticks(uint16_t* temperature_ticks) {
         return error;
     }
     *temperature_ticks = sensirion_common_bytes_to_uint16_t(&buffer[0]);
+    return NO_ERROR;
+}
+
+int16_t sts4x_measure_lowest_precision(float* temperature) {
+    int16_t error;
+    uint16_t temperature_ticks;
+
+    error = sts4x_measure_lowest_precision_ticks(&temperature_ticks);
+    if (error) {
+        return error;
+    }
+    *temperature = convert_ticks_to_celsius(temperature_ticks);
     return NO_ERROR;
 }
 
